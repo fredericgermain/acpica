@@ -99,7 +99,7 @@ AcpiNsDeleteNode (
         return_VOID;
     }
 
-#ifdef ACPI_USE_ACCELERATED_NS_SEARCH
+#ifdef ACPI_USE_NS_SEARCH_ACCELERATION
     AcpiNsSearchAccelerationDeleteNode(Node);
 #endif
 

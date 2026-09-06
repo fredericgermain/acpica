@@ -36,6 +36,10 @@ static ACPI_NAMESPACE_NODE *
 AcpiNsSearchOneScopeCoreAccelerated(
     UINT32                  TargetName,
     ACPI_NAMESPACE_NODE     *ParentNode);
+
+BOOLEAN
+AcpiNsSearchAccelerationAvailable (
+    void);
 #endif
 
 
@@ -141,11 +145,15 @@ AcpiNsSearchOneScope (
 #endif
 
 #ifdef ACPI_USE_NS_SEARCH_ACCELERATION
-    Node = AcpiNsSearchOneScopeCoreAccelerated (TargetName, ParentNode);
-    /* Fallback in case accelerated search is not available */
-    if (!Node)
+    if (AcpiNsSearchAccelerationAvailable ())
+    {
+        Node = AcpiNsSearchOneScopeCoreAccelerated (TargetName, ParentNode);
+    }
+    else
 #endif
-    Node = AcpiNsSearchOneScopeCore (TargetName, ParentNode);
+    {
+        Node = AcpiNsSearchOneScopeCore (TargetName, ParentNode);
+    }
 
     if (Node)
     {
@@ -480,6 +488,14 @@ static ACPI_NS_SEARCH_LIST_HEAD_TYPE *AcpiNsSearchHashTable = NULL;
  *              a warning is emitted (and no acceleration is used later).
  *
  ******************************************************************************/
+
+BOOLEAN
+AcpiNsSearchAccelerationAvailable (
+    void)
+{
+    return (AcpiNsSearchHashTable != NULL);
+}
+
 
 ACPI_STATUS
 AcpiNsSearchAccelerationInit (
